@@ -1,3 +1,5 @@
+#import json
+
 # wrap prints so debugging messages can be turned off easily
 def log (msg):
   #print msg
@@ -19,6 +21,29 @@ class Token:
     self.effect = effect.strip()
     self.subsystem = subsystem.strip()
     self.type = type.strip()
+
+  def json_data(self):
+    a = 0
+    b = 0
+    c = 0
+
+    try:
+      a, b, c = [int(n[:-1]) for n in self.abc.split(' ')]
+    except:
+      pass
+
+    obj = {
+      'word': self.word,
+      'glyph': self.glyph,
+      'effect': self.effect,
+      'subsystem': self.subsystem,
+      'type': self.type,
+      'range': a,
+      'cooldown': b,
+      'level': c
+    }
+
+    return obj
 
 class Spell:
   def __init__(self):
@@ -290,3 +315,10 @@ with open(fname, 'r') as file:
     by_word[word] = token
     by_num.append(Token)
   print()
+
+#obj = {}
+#for k, v in by_word.items():
+#  obj[k] = v.json_data()
+#
+#with open('tokens.json', 'w') as file:
+#  file.write(json.dumps(obj, indent=2, ensure_ascii=False))
