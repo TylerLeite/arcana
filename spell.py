@@ -45,12 +45,14 @@ class Spell:
     s.c_symbols = [c for c in self.c_symbols]
     return s
 
-  def json_data (self):
+  def json_data (self, words=None):
     if len(self.compiled) == 0:
-      self.compile()
+      self.compile(words)
+    if words is None:
+      words = self.words()
     return {
-      'words': self.words(),
-      'glyphs': self.glyphs(),
+      'words': words,
+      'glyphs': self.glyphs(words),
       'abc': '%d,%d,%d' % (self.a, self.b, self.c),
       'toggles': ', '.join(self.toggles),
       'shape': self.shape,
@@ -82,16 +84,18 @@ class Spell:
     code = ' '.join(self.c_symbols)
     return target_declaration + ' niz ' + code
 
-  def glyphs (self):
-    words = self.words().split(' ')
+  def glyphs (self, words=None):
+    if words is None:
+      words = self.words().split(' ')
     out = ''
     for word in words:
       out += by_word[word].glyph + ' '
     return out[:-1]
 
   # Actual compiler
-  def compile(self):
-    words = self.words().split(' ')
+  def compile(self, words=None):
+    if words is None:
+      words = self.words().split(' ')
 
     self.compiled = ''
 
@@ -281,8 +285,8 @@ with open(fname, 'r') as file:
       all_types.append(type)
     if not subsystem in all_subsystems:
       all_subsystems.append(subsystem)
-    print glyph,
+    print(glyph, end=" ")
     token = Token(line_num, word, glyph, abc, effect, subsystem, type)
     by_word[word] = token
     by_num.append(Token)
-  print '\n',
+  print()
